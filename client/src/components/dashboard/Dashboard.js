@@ -4,12 +4,22 @@ import { connect } from "react-redux";
 import { logoutUser } from "../../actions/authActions";
 import {Bar,Doughnut,Line} from 'react-chartjs-2';
 import 'bootstrap/dist/css/bootstrap.min.css'
+import { GoogleLogout } from 'react-google-login';
+const clientId ='546377929056-q4llvpv9kgej63aae3b67oi2hii14lea.apps.googleusercontent.com';
 
 class Dashboard extends Component {
+  // componentDidMount(){
+  //   !localStorage.getItem('google_login') ? alert('false') : alert('true');
+  // }
   onLogoutClick = e => {
     e.preventDefault();
     this.props.logoutUser();
   };
+  onLogoutSucc = () => { 
+    console.log('Logout Success');
+    localStorage.removeItem('google_login');
+    this.props.logoutUser();
+  }
   state = {
     labels: ['January', 'February', 'March',
             'April', 'May'],
@@ -39,19 +49,32 @@ class Dashboard extends Component {
                 You are logged in 👏
               </p>
             </h4>
-            <button
-              style={{
-                width: "150px",
-                borderRadius: "3px",
-                letterSpacing: "1.5px",
-                marginTop: "1rem"
-              }}
-              onClick={this.onLogoutClick}
-              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
-            >
-              Logout
-            </button>
-
+            {!localStorage.getItem('google_login') ? ( 
+              <button
+                style={{
+                  width: "150px",
+                  borderRadius: "3px",
+                  letterSpacing: "1.5px",
+                  marginTop: "1rem"
+                }}
+                onClick={this.onLogoutClick}
+                className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+              >
+                Logout
+              </button>
+            ) : (<GoogleLogout
+                clientId={clientId}
+                buttonText="Logout"
+                onLogoutSuccess={this.onLogoutSucc}
+              ></GoogleLogout>)
+            }
+            {/* {localStorage.getItem('google_login') && 
+              <GoogleLogout
+                clientId={clientId}
+                buttonText="Logout"
+                onLogoutSuccess={this.onLogoutSucc}
+              ></GoogleLogout>
+            } */}
           </div>
         </div><br/>
         <h2>Statistics</h2>
