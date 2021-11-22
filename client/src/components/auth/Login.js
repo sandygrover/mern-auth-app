@@ -54,7 +54,6 @@ class Login extends Component {
     };
 
     this.props.loginUser(userData);
-    // localStorage.setItem("google_login", 0);
   };
 
   // googleSDK() { 
@@ -196,10 +195,11 @@ class Login extends Component {
               buttonText="Login with Google"
               onSuccess={this.onSuccess}
               onFailure={this.onFailure}
-              cookiePolicy={'single_host_origin'}
+              // cookiePolicy={'single_host_origin'}
               style={{ marginTop: '100px' }}
               isSignedIn={true}
             />
+            
             {/* <GoogleLogout
               clientId={clientId}
               buttonText="Logout"
