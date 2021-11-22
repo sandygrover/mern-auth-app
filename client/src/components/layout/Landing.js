@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 class Landing extends Component {
   render() {
     return (
-      <div style={{ height: "75vh" }} className="container valign-wrapper">
+      <div style={{ height: "75vh",justifyContent: 'center',border: '1px solid #d7d7d7'}} className="container valign-wrapper">
         <div className="row">
           <div className="col s12 center-align">
             <h4>
@@ -23,7 +23,9 @@ class Landing extends Component {
                 style={{
                   width: "140px",
                   borderRadius: "3px",
-                  letterSpacing: "1.5px"
+                  letterSpacing: "1.5px",
+                  height: "auto",
+                  color: "white"
                 }}
                 className="btn btn-large waves-effect waves-light hoverable blue accent-3"
               >
