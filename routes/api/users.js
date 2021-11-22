@@ -65,22 +65,26 @@ router.post("/login", (req, res) => {
 
   const email = req.body.email;
   const password = req.body.password;
+  const google_login = req.body.google_login;
 
   // Find user by email
   User.findOne({ email }).then(user => {
     // Check if user exists
-    if (!user) {
+    if (!user && (google_login==='' || google_login===false)) {
       return res.status(404).json({ emailnotfound: "Email not found" });
     }
-
-    // Check password
-    bcrypt.compare(password, user.password).then(isMatch => {
-      if (isMatch) {
-        // User matched
+    if(!user && google_login===true){
+      const newUser = new User({
+        name: req.body.name,
+        email: req.body.email,
+        password: req.body.name
+      });
+      newUser.save(function(err, res1){ 
+        if (err){throw err;}
         // Create JWT Payload
         const payload = {
-          id: user.id,
-          name: user.name
+          id: res1._id,
+          name: res1.name
         };
 
         // Sign token
@@ -97,12 +101,69 @@ router.post("/login", (req, res) => {
             });
           }
         );
-      } else {
-        return res
-          .status(400)
-          .json({ passwordincorrect: "Password incorrect" });
-      }
-    });
+      });
+      // newUser.save()
+      //   .then(
+      //     console.log(res.json)
+      //     // user => res.json(user)
+      //     );
+
+      
+
+    }
+    if(user && google_login===true){
+      const payload = {
+        id: user.id,
+        name: user.name
+      };
+
+      // Sign token
+      jwt.sign(
+        payload,
+        keys.secretOrKey,
+        {
+          expiresIn: 31556926 // 1 year in seconds
+        },
+        (err, token) => {
+          res.json({
+            success: true,
+            token: "Bearer " + token
+          });
+        }
+      );
+    }
+    if(google_login==='' || google_login===false){
+      // Check password
+      bcrypt.compare(password, user.password).then(isMatch => {
+        if (isMatch) {
+          // User matched
+          // Create JWT Payload
+          const payload = {
+            id: user.id,
+            name: user.name
+          };
+
+          // Sign token
+          jwt.sign(
+            payload,
+            keys.secretOrKey,
+            {
+              expiresIn: 31556926 // 1 year in seconds
+            },
+            (err, token) => {
+              res.json({
+                success: true,
+                token: "Bearer " + token
+              });
+            }
+          );
+        } else {
+          return res
+            .status(400)
+            .json({ passwordincorrect: "Password incorrect" });
+        }
+      });
+    }
   });
 });
 
